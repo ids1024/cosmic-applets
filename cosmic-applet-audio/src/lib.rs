@@ -32,6 +32,7 @@ use cosmic::widget::Row;
 use cosmic::widget::{divider, icon};
 use cosmic::Renderer;
 use cosmic::{Element, Theme};
+use cosmic_settings_subscriptions::pulse as sub_pulse;
 use cosmic_time::{anim, chain, id, once_cell::sync::Lazy, Instant, Timeline};
 use iced::wayland::popup::{destroy_popup, get_popup};
 use iced::widget::container;
@@ -151,6 +152,7 @@ pub enum Message {
     MprisRequest(MprisRequest),
     Token(TokenUpdate),
     OpenSettings,
+    PulseSub(sub_pulse::Event),
 }
 
 impl Audio {
@@ -550,6 +552,9 @@ impl cosmic::Application for Audio {
                     cosmic::process::spawn(cmd);
                 }
             },
+            Message::PulseSub(event) => {
+                dbg!(event);
+            }
         };
 
         Command::none()
@@ -569,6 +574,7 @@ impl cosmic::Application for Audio {
             }),
             mpris_subscription::mpris_subscription(0).map(Message::Mpris),
             activation_token_subscription(0).map(Message::Token),
+            sub_pulse::subscription().map(Message::PulseSub),
         ])
     }
 
